@@ -18,10 +18,10 @@
                 <li><a href="#services">Service</a></li>
                 <li><a href="#portfolio">Portfolio</a></li>
                 <li><a href="#contact">Contact</a></li>
-                <i class="fas fa-times" onclick="closeMenu()"></i>
+                <i class="fa-times" onclick="closeMenu()"></i>
 
             </ul>
-            <i class="fa-solid fa-bars" onclick="openMenu()"></i>
+            <i class="fa-solid fa-bars fas" onclick="openMenu()"></i>
 
         </nav>
         <div class="header-text">
@@ -186,8 +186,8 @@ function closeMenu() {
     sideMenu.style.right = "-200px";
 }
 
-nav.querySelector(".fa-bars").addEventListener("click", openMenu);
-sideMenu.querySelector(".fas").addEventListener("click", closeMenu);
+nav.querySelector(".fas").addEventListener("click", openMenu);
+sideMenu.querySelector(".fa-times").addEventListener("click", closeMenu);
  </script >
 <script>
     document.addEventListener("DOMContentLoaded", function () {
