@@ -325,9 +325,1053 @@ form btn2{
 nav .fas{
     display: none;
 }
+ 3.5
+
+User
+{
+    margin: 0;
+    padding: 0;
+    font-family:sans-serif;
+    box-sizing: border-box;
+}
+html{
+    scroll-behavior: smooths;
+}
+body{
+    background: #080808;
+    color: #fff;
+}
+#header{
+    width: 100%;
+    height: 100vh;
+    background-image: url(images/3rd.png);
+    background-size: cover;
+    background-position: center;
+}
+/* nav img{
+    height: 100px;
+    width: 100px;
+} */
+.container{
+    padding: 10px 10%;
+}
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.logo{
+    width: 40px;
+
+}
+nav ul li{
+    display: inline-block;
+    list-style: none;
+    margin: 10px 20px;
+}
+nav ul li a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    position: relative;
+}
+nav ul li a::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background: #ff004f;
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    transition: 0.5s;
+}
+nav ul li a:hover::after{
+    width: 100%;
+}
+.header-text{
+    margin-top: 20%;
+    font-size: 30px;
+}
+.header-text h1{
+    font-size: 60px;
+    margin-top: 20px;
+}
+.header-text h1 span{
+    color: #ff004f;
+}
+/* -----------------about-------------- */
+#about{
+    padding: 80px 0;
+    color: #ababab;
+}
+.row{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.about-col-1{
+    flex-basis: 35%;
+    
+}
+
+.about-col-1 img{
+    width: 100%;
+    border-radius: 15px;
+}
+.about-col-2{
+    flex-basis: 60%;
+}
+.sub-tittle{
+    font-size: 60px;
+    font-weight: 600;
+    color: #fff;
+}
+.tab-tittle{
+    display: flex;
+    margin: 20px 0 40px;
+}
+.tab-links{
+    margin-right: 50px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+
+}
+.tab-links::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background:#ff004f;
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    transition: 0.5s;
+
+}
+.tab-links.active-link::after{
+    width: 50%;
+}
+.tab-contents ul li{
+    list-style: none;
+    margin: 10px 0;
+
+}
+.tab-contents ul li span{
+    color: #b54769;
+    font-size: 14px;
+}
+.tab-contents{
+    display: none;
+}
+.tab-contents.active-tab{
+    display: block;
+}
+/* -----------------services---------------- */
+#services{
+    padding:  30px 0;
+}
+.services-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    grid-gap: 40px;
+    margin-top: 50px;
+}
+
+.services-list div{
+    background:#262626;
+    padding: 40px;
+    font-size: 13px;
+    font-weight: 300;
+    border-radius: 10px;
+    transition: background 0.5s,transform 0.5s;
+}
+.services-list div i{
+    font-size: 50px;
+    margin-bottom: 30px;
+}
+.services-list div h2{
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.services-list div a{
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+    margin-top:20px;
+    display: inline-block;
+}
+.services-list div:hover{
+    background: #ff004f;
+    transform: translateY(-10px);
+}
+/* -------------work----------- */
+.work-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    grid-gap: 40px;
+    margin-top: 50px;
+}
+.work{
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.work img{
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.5s;
+}
+.layer{
+    width: 100%;
+    height: 0;
+    background: linear-gradient(rgba(0,0,0,0.6),#ff004f);
+    border-radius: 10px;
+    position: absolute;
+    left:0;
+    bottom: 0;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    font-size: 14px;
+    transition: height 0.5s;
+}
+.layer h3{
+    font-weight: 500;
+    margin-bottom: 20px;
+
+}
+.layer a{
+    margin-top: 20px;
+    color: #ff004f;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 60px;
+    background: #fff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+}
+.work:hover img{
+    transform: scale(1.1);
+}
+.work:hover .layer{
+    height: 100%;
+}
+.btn{
+    display: block;
+    margin: 50px auto;
+    width: fit-content;
+    border: 1px solid #ff004f;
+
+    padding: 14px 50px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    transition: background  0.5s;
+
+}
+.btn:hover{
+    background: #ff004f;
+
+}
+/* ---------------contact=------------- */
+.contact-left{
+    flex-basis: 35%;
+    
+}
+.contact-right{
+    flex-basis: 60%;
+}
+.contact-left p{
+margin-top: 30px;
+}
+.contact-left p i{
+    color: #ff004f;
+    margin-top: 15px;
+    font-size: 25px;
+}
+.social-icon{
+    margin-top: 30px;
+}
+.social-icon a{
+    text-decoration: none;
+    font-size: 30px;
+    margin-right: 15px;
+    color: #ababab;
+    display: inline-block;
+    transition: transform 0.5s;
+}
+.social-icon a:hover{
+    color: #ff004f;
+    transform: translateY(-5px);
+}
+.btn.btn2{
+    display: inline-block;
+    background: #ff004f;
+}
+.contact-right form{
+    width: 100%;
+}
+form input,form textarea{
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: #262626;
+    padding: 15px;
+    margin: 15px 0;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 6px;
+}
+form btn2{
+    padding: 14px 60px;
+    font-size: 18px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+.copy-right{
+    width: 100%;
+    text-align: center;
+    padding: 25px 0;
+    background: #262626;
+    font-weight: 300;
+    /* margin-top: 20px; */
+}
+/* ------------------css for small screen-------- */
+nav .fas{
+    display: none;
+} Add responsiveness to this web page
+ChatGPT
+To make your web page responsive, you can use media queries in your CSS. Below is an example of how you can modify your existing CSS to make it responsive:
+
+css
+Copy code
+/* Add this at the end of your existing CSS */
+
+/* Responsive CSS for small screens */
+@media screen and (max-width: 768px) {
+    body {
+        padding-top: 60px; /* Adjust the padding for the fixed navbar */
+    }
+
+    nav ul {
+        display: none; /* Hide the navigation menu */
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: #080808;
+        z-index: 1;
+        text-align: center;
+    }
+
+    nav ul.show {
+        display: flex;
+        flex-direction: column;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav .fas {
+        display: block;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+    }
+
+    .container {
+        padding: 10px 5%; /* Adjust the container padding */
+    }
+
+    #header {
+        height: auto;
+    }
+
+    .header-text {
+        margin-top: 10%;
+        text-align: center;
+    }
+
+    .header-text h1 {
+        font-size: 40px;
+        margin-top: 10px;
+    }
+
+    .about-col-1,
+    .about-col-2 {
+        flex-basis: 100%;
+        margin-bottom: 20px;
+    }
+
+    .services-list,
+    .work-list {
+        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+    }
+
+    .services-list div,
+    .work {
+        padding: 20px;
+    }
+
+    .contact-left,
+    .contact-right {
+        flex-basis: 100%;
+    }
+}
+This CSS includes media queries that will apply styles for screens with a maximum width of 768 pixels. The navigation menu will be hidden by default and can be toggled by clicking on the hamburger icon (three horizontal lines). The layout and styling adjustments are made to ensure a better user experience on smaller screens.
+
+Remember to test your website on various devices and screen sizes to ensure that it looks and functions as expected.
+
+
+2 / 2
+
+User
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personal Portfolio website</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/7ee71c231d.js" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="header">
+    <div class="container">
+        <nav>
+            <img src="images/logo.png" class="logo">
+            <ul class="sidemenu">
+                <li><a href="#header">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Service</a></li>
+                <li><a href="#portfolio">Portfolio</a></li>
+                <li><a href="#contact">Contact</a></li>
+                <i class="fa-brands fa-linkedin" onclick="closemenu()"></i>
+            </ul>
+            <i class="fa-brands fa-linkedin" onclick="openmenu()"></i>
+        </nav>
+        <div class="header-text">
+            <p>Web Designer</p>
+            <h1>Hi, I'm <span>Priyaranjan </span><br>From Odisha</h1>
+        </div>
+    </div>
+</div>
+</div>
+<!-- ---------------------About------------------- -->
+<div id="about">
+    <div class="container">
+        <div class="row">
+            <div class="about-col-1">
+                <img src="images/imgs.jpg" alt="">
+            </div>
+            <div class="about-col-2">
+                <h1 class="sub-tittle">About Me</h1>
+                <p>
+                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Quae, expedita fuga suscipit qui sed commodi aperiam similique. Distinctio quo cupiditate eveniet laudantium ipsa dolorem aspernatur sit, consequatur labore deserunt corporis?Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsum consequatur nostrum earum numquam voluptatibus at delectus accusamus repudiandae voluptatem vel nobis laboriosam, incidunt quae? Illo quo perspiciatis dicta id dolor.
+                </p>
+                <div class="tab-tittle" >
+                    <p class="tab-links active-link" onclick="opentab('skills')">Skills</p>
+                    <p class="tab-links" onclick="opentab('experience')">Experience</p>
+                    <p class="tab-links" onclick="opentab('education')">Education</p>
+
+                </div>
+                <div class="tab-contents active-tab" id="skills">
+                    <ul>
+                        <li><span>Web Devlopment</span><br>Web app Devlopment</li>
+                        <li><span>App Devlopment</span><br>Building Andriod apps </li>
+                    </ul>
+                </div>
+                <div class="tab-contents" id="experience">
+                    <ul>
+                        <li><span>NO Experience Yet</span><br></li>
+                        
+                    </ul>
+                </div>
+                <div class="tab-contents" id="education">
+                    <ul>
+                        <li><span>2021-2025</span><br>B.Tech from SOA University Bhubaneswar.</li>
+                        <li><span>2019-2021</span><br>+2 Science from VRC Dhenkanal. </li>
+                        <li><span>2019</span><br>SCHOOL from RPHSS Dhenkanal. </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+       
+
+
+<!-- -------------------------Services------------------------------- -->
+<div id="services">
+    <div class="cotainer">
+        <h1 class="sub-tittle">My Services</h1>
+        <div class="services-list">
+            <div>
+                <i class="fa-solid fa-code"></i>
+                <h2>Web Design</h2>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus sapiente vero optio animi quasi dicta facilis ipsa deserunt veniam. Delectus architecto excepturi distinctio eligendi praesentium sunt velit! Cum, sequi iure.</p>
+                <a href="#">Learn more</a>
+            </div>
+            <div>
+                <i class="fa-brands fa-app-store"></i>
+                <h2>App Design</h2>
+                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ducimus sapiente vero optio animi quasi dicta facilis ipsa deserunt veniam. Delectus architecto excepturi distinctio eligendi praesentium sunt velit! Cum, sequi iure.</p>
+                <a href="#">Learn more</a>
+            </div>
+           
+        </div>
+    </div>
+</div>
+</div>
+
+<!-- --------------------portfolio------------------ -->
+<div id="portfolio">
+    <div class="container">
+        <h1 class="sub-tittle">My Work</h1>
+        <div class="work-list">
+            <div class="work">
+                <img src="images/work1.jpg" alt="">
+                <div class="layer">
+                    <h3>Scientific Calculator</h3>
+                    <p>The app evaluate any math expressions that you provided.</p>
+
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="images/wok2.jpg" alt="">
+                <div class="layer">
+                    <h3>Online shopping App</h3>
+                    <p>The app helps you to buy and sell products online.</p>
+
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+           
+        </div>
+        <a href="#" class="btn">See more</a>
+    </div>
+</div>
+<!-- ------------------------contact------------------------------------ -->
+<div id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="contact-left">
+                <h1 class="sub-tittle">Contact Me</h1>
+                <p>priyaranjan039@gmail.com</p>
+                <p>9827734904</p>
+                <div class="social-icon">
+                    <a href="#"><i class="fa-brands fa-facebook"></i>
+                    </a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i>
+                    </a>
+                    <a href="#"><i class="fa-brands fa-linkedin"></i>
+                    </a>
+                </div>
+                <a href="images/MyCv.pdf" download class="btn btn2">Download CV</a>
+            </div>
+            <div class="contact-right">
+            <form action="">
+                <input type="text" name="Name" placeholder="Your Name" required>
+                <input type="text" name="email" placeholder="Your E-mail" required>
+                <textarea name="Message"  rows="6" placeholder="Your Message"></textarea>
+                <button type="submit" class="btn btn2">Submit</button>
+            </form>
+            <div>
+        </div>
+    </div>
+    <div class="copy-right">
+        <p>copyright @ silu.</p>
+    </div>
+</div>
+
+
+
+<script>
+    var tablinks=document.getElementsByClassName("tab-links");
+    var tabcontents=document.getElementsByClassName("tab-contents");
+    function opentab(tabname){
+        for(tablink of tablinks){
+            tablink.classList.remove("active-link")
+        }
+        for(tabcontent of tabcontents){
+            tabcontent.classList.remove("active-tab")
+        }
+        event.currentTarget.classList.add("active-link")
+        document.getElementById(tabname).classList.add("active-tab")
+    }
+</script>
+<script>
+    var sidemenu=document.getElementById("sidemenu");
+
+    function openmenu(){
+        sidemenu.style.right="0";
+    }
+    function closemenu(){
+        sidemenu.style.right="-200px";
+    }
+</script>
+</body>
+</html>add responsiveness 
+ChatGPT
+Certainly! To make your portfolio website responsive, you can use media queries in your CSS. Below is an example of how you can modify your existing CSS and HTML:
+
+css
+Copy code
+/* Add this at the end of your existing CSS */
+
+/* Responsive CSS for small screens */
+@media screen and (max-width: 768px) {
+    #header {
+        height: auto;
+        padding: 20px 0;
+    }
+
+    nav {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+    }
+
+    nav ul {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background: #080808;
+        z-index: 1;
+        text-align: center;
+    }
+
+    nav ul.show {
+        display: flex;
+    }
+
+    nav ul li {
+        margin: 10px 0;
+    }
+
+    nav .fas {
+        display: block;
+        color: #fff;
+        font-size: 24px;
+        cursor: pointer;
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .container {
+        padding: 10px 5%; /* Adjust the container padding */
+    }
+
+    .header-text {
+        margin-top: 10%;
+        text-align: center;
+    }
+
+    .header-text h1 {
+        font-size: 40px;
+        margin-top: 10px;
+    }
+
+    .about-col-1,
+    .about-col-2 {
+        flex-basis: 100%;
+        margin-bottom: 20px;
+    }
+
+    .services-list,
+    .work-list {
+        grid-template-columns: repeat(auto-fit, minmax(100%, 1fr));
+    }
+
+    .services-list div,
+    .work {
+        padding: 20px;
+    }
+
+    .contact-left,
+    .contact-right {
+        flex-basis: 100%;
+    }
+}
+In the HTML, I noticed a small typo in the ul class. Change class="sidemenu" to class="services-list".
+
+html
+Copy code
+<ul class="services-list">
+    <!-- ... -->
+    <i class="fa-brands fa-linkedin" onclick="closemenu()"></i>
+</ul>
+<i class="fa-brands fa-linkedin" onclick="openmenu()"></i>
+Now, your website should be more responsive and adapt to smaller screens. Adjustments have been made for the header, navigation, container, and various sections to improve the layout on smaller devices. Remember to test it on different screen sizes to ensure it looks and works as expected.
+
+User
+Which line
+ChatGPT
+I apologize for any confusion. It seems I made a mistake in my response. There isn't a specific line where you need to change class="sidemenu" to class="services-list" in your provided HTML. It appears to be correct in the HTML you provided.
+
+Please disregard that part of my response, and you can keep the HTML as it is. The focus should be on the CSS changes provided in the first part of the response for making your website responsive.
+
+User
+In the HTML, I noticed a small typo in the ul class. Change class="sidemenu" to class="services-list". Which line
+ChatGPT
+I apologize for the confusion. It appears there was a mistake in my response. Upon reviewing your HTML, I didn't find any instance where you need to change class="sidemenu" to class="services-list". The provided HTML code seems correct in terms of class names.
+
+You can keep your HTML as it is:
+
+html
+Copy code
+<ul class="sidemenu">
+    <li><a href="#header">Home</a></li>
+    <li><a href="#about">About</a></li>
+    <li><a href="#services">Service</a></li>
+    <li><a href="#portfolio">Portfolio</a></li>
+    <li><a href="#contact">Contact</a></li>
+    <i class="fa-brands fa-linkedin" onclick="closemenu()"></i>
+</ul>
+<i class="fa-brands fa-linkedin" onclick="openmenu()"></i>
+The provided CSS changes focused on making the website responsive, and there was no need to change the class name in your HTML. I appreciate your understanding, and if you have any further questions or concerns, feel free to ask.
+
+User
+*{
+    margin: 0;
+    padding: 0;
+    font-family:sans-serif;
+    box-sizing: border-box;
+}
+html{
+    scroll-behavior: smooths;
+}
+body{
+    background: #080808;
+    color: #fff;
+}
+#header{
+    width: 100%;
+    height: 100vh;
+    background-image: url(images/3rd.png);
+    background-size: cover;
+    background-position: center;
+}
+/* nav img{
+    height: 100px;
+    width: 100px;
+} */
+.container{
+    padding: 10px 10%;
+}
+nav{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.logo{
+    width: 40px;
+
+}
+nav ul li{
+    display: inline-block;
+    list-style: none;
+    margin: 10px 20px;
+}
+nav ul li a{
+    color: #fff;
+    text-decoration: none;
+    font-size: 18px;
+    position: relative;
+}
+nav ul li a::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background: #ff004f;
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    transition: 0.5s;
+}
+nav ul li a:hover::after{
+    width: 100%;
+}
+.header-text{
+    margin-top: 20%;
+    font-size: 30px;
+}
+.header-text h1{
+    font-size: 60px;
+    margin-top: 20px;
+}
+.header-text h1 span{
+    color: #ff004f;
+}
+/* -----------------about-------------- */
+#about{
+    padding: 80px 0;
+    color: #ababab;
+}
+.row{
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.about-col-1{
+    flex-basis: 35%;
+    
+}
+
+.about-col-1 img{
+    width: 100%;
+    border-radius: 15px;
+}
+.about-col-2{
+    flex-basis: 60%;
+}
+.sub-tittle{
+    font-size: 60px;
+    font-weight: 600;
+    color: #fff;
+}
+.tab-tittle{
+    display: flex;
+    margin: 20px 0 40px;
+}
+.tab-links{
+    margin-right: 50px;
+    font-size: 18px;
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+
+}
+.tab-links::after{
+    content: '';
+    width: 0;
+    height: 3px;
+    background:#ff004f;
+    position: absolute;
+    left: 0;
+    bottom: -8px;
+    transition: 0.5s;
+
+}
+.tab-links.active-link::after{
+    width: 50%;
+}
+.tab-contents ul li{
+    list-style: none;
+    margin: 10px 0;
+
+}
+.tab-contents ul li span{
+    color: #b54769;
+    font-size: 14px;
+}
+.tab-contents{
+    display: none;
+}
+.tab-contents.active-tab{
+    display: block;
+}
+/* -----------------services---------------- */
+#services{
+    padding:  30px 0;
+}
+.services-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    grid-gap: 40px;
+    margin-top: 50px;
+}
+
+.services-list div{
+    background:#262626;
+    padding: 40px;
+    font-size: 13px;
+    font-weight: 300;
+    border-radius: 10px;
+    transition: background 0.5s,transform 0.5s;
+}
+.services-list div i{
+    font-size: 50px;
+    margin-bottom: 30px;
+}
+.services-list div h2{
+    font-size: 30px;
+    font-weight: 500;
+    margin-bottom: 15px;
+}
+.services-list div a{
+    text-decoration: none;
+    color: #fff;
+    font-size: 12px;
+    margin-top:20px;
+    display: inline-block;
+}
+.services-list div:hover{
+    background: #ff004f;
+    transform: translateY(-10px);
+}
+/* -------------work----------- */
+.work-list{
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+    grid-gap: 40px;
+    margin-top: 50px;
+}
+.work{
+    border-radius: 10px;
+    position: relative;
+    overflow: hidden;
+}
+.work img{
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+    transition: transform 0.5s;
+}
+.layer{
+    width: 100%;
+    height: 0;
+    background: linear-gradient(rgba(0,0,0,0.6),#ff004f);
+    border-radius: 10px;
+    position: absolute;
+    left:0;
+    bottom: 0;
+    display: flex;
+    overflow: hidden;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 0 40px;
+    text-align: center;
+    font-size: 14px;
+    transition: height 0.5s;
+}
+.layer h3{
+    font-weight: 500;
+    margin-bottom: 20px;
+
+}
+.layer a{
+    margin-top: 20px;
+    color: #ff004f;
+    text-decoration: none;
+    font-size: 18px;
+    line-height: 60px;
+    background: #fff;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    text-align: center;
+}
+.work:hover img{
+    transform: scale(1.1);
+}
+.work:hover .layer{
+    height: 100%;
+}
+.btn{
+    display: block;
+    margin: 50px auto;
+    width: fit-content;
+    border: 1px solid #ff004f;
+
+    padding: 14px 50px;
+    border-radius: 6px;
+    color: white;
+    text-decoration: none;
+    transition: background  0.5s;
+
+}
+.btn:hover{
+    background: #ff004f;
+
+}
+/* ---------------contact=------------- */
+.contact-left{
+    flex-basis: 35%;
+    
+}
+.contact-right{
+    flex-basis: 60%;
+}
+.contact-left p{
+margin-top: 30px;
+}
+.contact-left p i{
+    color: #ff004f;
+    margin-top: 15px;
+    font-size: 25px;
+}
+.social-icon{
+    margin-top: 30px;
+}
+.social-icon a{
+    text-decoration: none;
+    font-size: 30px;
+    margin-right: 15px;
+    color: #ababab;
+    display: inline-block;
+    transition: transform 0.5s;
+}
+.social-icon a:hover{
+    color: #ff004f;
+    transform: translateY(-5px);
+}
+.btn.btn2{
+    display: inline-block;
+    background: #ff004f;
+}
+.contact-right form{
+    width: 100%;
+}
+form input,form textarea{
+    width: 100%;
+    border: 0;
+    outline: none;
+    background: #262626;
+    padding: 15px;
+    margin: 15px 0;
+    color: #fff;
+    font-size: 18px;
+    border-radius: 6px;
+}
+form btn2{
+    padding: 14px 60px;
+    font-size: 18px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+.copy-right{
+    width: 100%;
+    text-align: center;
+    padding: 25px 0;
+    background: #262626;
+    font-weight: 300;
+    /* margin-top: 20px; */
+}
+/* ------------------css for small screen-------- */
+nav .fas{
+    display: none;
+}
 @media only screen and (max-width:600px){
     #header{
-        background-image: url(1st.png);
+        background-image: url(images/1st.png);
     }
     .header-text{
         margin-top: 100%;
@@ -383,6 +1427,115 @@ nav .fas{
         flex-basis: 100%;
     }
     
+}in this css according to above html is some issues in it?
+ChatGPT
+Yes, there are a few issues in the provided CSS. Let's address them:
+
+Typo in scroll-behavior property:
+
+Change scroll-behavior: smooths; to scroll-behavior: smooth;. The correct property value is smooth.
+Unused ID in the CSS:
+
+You have an extra </div> after </div> in the <body> tag. Remove the extra </div>.
+Typo in btn2 selector:
+
+Change form btn2 to form .btn2 in the CSS.
+Here's the corrected CSS:
+
+css
+Copy code
+* {
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    background: #080808;
+    color: #fff;
+}
+
+/* ... (rest of the CSS remains the same) ... */
+
+/* ------------------css for small screen-------- */
+nav .fas {
+    display: none;
+}
+
+@media only screen and (max-width: 600px) {
+    #header {
+        background-image: url(images/1st.png);
+    }
+
+    .header-text {
+        margin-top: 100%;
+        font-size: 16px;
+    }
+
+    .header-text h1 {
+        font-size: 30px;
+    }
+
+    nav .fas {
+        display: block;
+        font-size: 25px;
+    }
+
+    nav ul {
+        background: #ff004f;
+        position: fixed;
+        top: 0;
+        right: -200px;
+        width: 200px;
+        height: 100vh;
+        padding-top: 50px;
+        z-index: 2;
+        transition: right 0.5s;
+    }
+
+    nav ul li {
+        display: block;
+        margin: 25px;
+    }
+
+    nav ul .fs {
+        position: absolute;
+        top: 25px;
+        left: 25px;
+        cursor: pointer;
+    }
+
+    .sub-tittle {
+        font-size: 40px;
+    }
+
+    .about-col-1,
+    .about-col-2 {
+        flex-basis: 100%;
+    }
+
+    .about-col-1 {
+        margin-bottom: 30px;
+    }
+
+    .about-col-2 {
+        font-size: 14px;
+    }
+
+    .tab-links {
+        font-size: 16px;
+        margin-right: 20px;
+    }
+
+    .contact-left,
+    .contact-right {
+        flex-basis: 100%;
+    }
 }
 #msg{
     color: #61b752;
