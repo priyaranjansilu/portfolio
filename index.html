@@ -20,7 +20,8 @@
                 <li><a href="#contact">Contact</a></li>
                 <i class="fa-regular fa-circle-xmark" onclick="closemenu()"></i>
             </ul>
-            <i class="fa-solid fa-bars" onclick="openmenu()"></i>
+            <i class="fas fa-bars fs" onclick="openMenu()"></i>
+
         </nav>
         <div class="header-text">
             <p>Web Designer</p>
@@ -172,16 +173,21 @@
         document.getElementById(tabname).classList.add("active-tab")
     }
 </script>
-<script>
-    var sidemenu=document.getElementById("sidemenu");
+ <script>
+var nav = document.querySelector("nav");
+var sideMenu = document.querySelector(".sidemenu");
 
-    function openmenu(){
-        sidemenu.style.right="0";
-    }
-    function closemenu(){
-        sidemenu.style.right="-200px";
-    }
-</script>
+function openMenu() {
+    sideMenu.style.right = "0";
+}
+
+function closeMenu() {
+    sideMenu.style.right = "-200px";
+}
+
+nav.querySelector(".fas").addEventListener("click", openMenu);
+sideMenu.querySelector(".fa-linkedin").addEventListener("click", closeMenu);
+ </script >
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const header = document.getElementById("header");
