@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movies Website</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <div class="container">
+        <h1>Movies</h1>
+        <nav>
+            <ul class="sidemenu">
+                <li><a href="https://priyaranjansilu.github.io/portfolio/">Home</a></li>
+                <li><a href="#">Movies</a></li>
+                <li><a href="https://priyaranjansilu.github.io/portfolio/#contact">Reviews</a></li>
+                <li><a href="https://priyaranjansilu.github.io/portfolio/#about">About</a></li>
+                <li><a href="https://priyaranjansilu.github.io/portfolio/#contact">Contact</a></li>
+                <i class="fa-regular fa-circle-xmark" onclick="closemenu()"></i>
+            </ul>
+            <i class="fa-solid fa-bars fas" onclick="openmenu()"></i>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="container">
+        <div class="movie-container">
+            <div class="movie">
+                <img src="https://static1.srcdn.com/wordpress/wp-content/uploads/2022/03/the-gray-man-poster.jpg" alt="Movie 1">
+                <h3><a href="https://drive.google.com/file/d/1CnieWd_adwPgnevs3a8ut_zapZEioZa-/view?usp=sharing" download >The Gray Man</a></h3>
+            </div>
+            <div class="movie">
+                <img src="https://1.bp.blogspot.com/-PiojVv21Hi8/YHwMKIpRa5I/AAAAAAAAKGA/5TAs8B917FQ09aemryVpS1yBfBhMDNzCQCLcBGAsYHQ/s600/Man+of+Steel+2013.jpg" alt="Movie 2">
+                <h3><a href="https://drive.google.com/uc?export=download&id=1CiLSDSGZsmOcShd0QICH_yWegYn5PHJS" download >Man of Steel (2013)</a></h3>
+            <!-- <p>Description of Movie 2.</p> -->
+        </div>
+        <div class="movie">
+            <img src="https://assets.gadgets360cdn.com/pricee/assets/product/202305/kerala-story_1683018677.JPG" alt="Movie 2">
+            <h3><a href="https://drive.google.com/file/d/15ovQ2JkiY_D7v4xgve0vurQp5ET7ZLAH/view?usp=sharing" download >The Kerala Story</a></h3>
+        <!-- <p>Description of Movie 2.</p> -->
+    </div>
+    <div class="movie">
+        <img src="https://th.bing.com/th/id/OIP.ZcROLiHzS1Oi_o1aDP7gLAHaLH?rs=1&pid=ImgDetMain" alt="Movie 2">
+        <h3><a href="https://drive.google.com/uc?export=download&id=1nEoc6LWN1XrWqkWhbGQvkszqAt94W50y" download >Independence Day: Resurgence</a></h3>
+    <!-- <p>Description of Movie 2.</p> -->
+</div>
+<div class="movie">
+    <img src="https://th.bing.com/th/id/OIP.QZtKtP2hrIBoUQ677AQvqwHaKh?rs=1&pid=ImgDetMain" alt="Movie 2">
+    <h3><a href="https://drive.google.com/uc?export=download&id=176MV0DQgdzu8veNwEgz-4L2cDQS8NWq9" download >
+        Doctor Strange in the Multiverse of Madness</a></h3>
+<!-- <p>Description of Movie 2.</p> -->
+</div>
+<div class="movie">
+    <img src="https://th.bing.com/th/id/OIP.88G3_UmmoLq_Djf6DgWvugHaLH?rs=1&pid=ImgDetMain" alt="Movie 2">
+    <h3><a href="https://drive.google.com/file/d/1Bo2ty7YcnxVWtB5UgADR7zy_Pc7C9syJ/view?usp=sharing" download >
+        R.I.P.D.: Rest in Peace Department</a></h3>
+<!-- <p>Description of Movie 2.</p> -->
+</div>
+        <!-- Add more movie sections as needed -->
+    </section>
+</main>
+
+<footer>
+    <div class="container">
+        <p>&copy; 2024 Movies Website.copyright @ silu..</p>
+    </div>
+</footer>
+<script>
+    var sidemenu=document.getElementById("sidemenu");
+
+    function openmenu(){
+        sidemenu.style.right="0";
+    }
+    function closemenu(){
+        sidemenu.style.right="-200px";
+    }
+</script>
+</body>
+</html>
