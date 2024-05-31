@@ -11,8 +11,9 @@
 <header>
     <div class="container">
         <h1>Movies</h1>
+        <input type="text" id="search-bar" placeholder="Search for movies..." onkeyup="filterMovies()">
         <nav>
-            <ul class="sidemenu">
+            <ul class="sidemenu" id="sidemenu">
                 <li><a href="https://priyaranjansilu.github.io/portfolio/">Home</a></li>
                 <li><a href="#">Movies</a></li>
                 <li><a href="https://priyaranjansilu.github.io/portfolio/#contact">Reviews</a></li>
@@ -26,62 +27,71 @@
 </header>
 
 <main>
-    <section class="container">
+    <section class="container" id="movie-list">
         <div class="movie-container">
             <div class="movie">
-                <img src="https://static1.srcdn.com/wordpress/wp-content/uploads/2022/03/the-gray-man-poster.jpg" alt="Movie 1">
+                <img src="https://static1.srcdn.com/wordpress/wp-content/uploads/2022/03/the-gray-man-poster.jpg" alt="The Gray Man">
                 <h3><a href="https://drive.google.com/uc?export=download&id=1CnieWd_adwPgnevs3a8ut_zapZEioZa-" download >The Gray Man</a></h3>
             </div>
             <div class="movie">
-                <img src="https://1.bp.blogspot.com/-PiojVv21Hi8/YHwMKIpRa5I/AAAAAAAAKGA/5TAs8B917FQ09aemryVpS1yBfBhMDNzCQCLcBGAsYHQ/s600/Man+of+Steel+2013.jpg" alt="Movie 2">
+                <img src="https://1.bp.blogspot.com/-PiojVv21Hi8/YHwMKIpRa5I/AAAAAAAAKGA/5TAs8B917FQ09aemryVpS1yBfBhMDNzCQCLcBGAsYHQ/s600/Man+of+Steel+2013.jpg" alt="Man of Steel (2013)">
                 <h3><a href="https://drive.google.com/uc?export=download&id=1CiLSDSGZsmOcShd0QICH_yWegYn5PHJS" download >Man of Steel (2013)</a></h3>
-            <!-- <p>Description of Movie 2.</p> -->
+            </div>
+            <div class="movie">
+                <img src="https://m.media-amazon.com/images/M/MV5BZDY0YzI0OTctYjVhYy00MTVhLWE0NTgtYTRmYTBmOTE3YTViXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg" alt="Kung Fu Panda 4">
+                <h3><a href="https://drive.google.com/uc?export=download&id=1cPU0PspIxsrq9Qj4S1yzuGiujVker9ar" download >Kung Fu Panda 4</a></h3>
+            </div>
+            <div class="movie">
+                <img src="https://th.bing.com/th/id/OIP.ZcROLiHzS1Oi_o1aDP7gLAHaLH?rs=1&pid=ImgDetMain" alt="Independence Day: Resurgence">
+                <h3><a href="https://drive.google.com/uc?export=download&id=1nEoc6LWN1XrWqkWhbGQvkszqAt94W50y" download >Independence Day: Resurgence</a></h3>
+            </div>
+            <div class="movie">
+                <img src="https://th.bing.com/th/id/OIP.QZtKtP2hrIBoUQ677AQvqwHaKh?rs=1&pid=ImgDetMain" alt="Doctor Strange in the Multiverse of Madness">
+                <h3><a href="https://drive.google.com/uc?export=download&id=176MV0DQgdzu8veNwEgz-4L2cDQS8NWq9" download >Doctor Strange in the Multiverse of Madness</a></h3>
+            </div>
+            <div class="movie">
+                <img src="https://th.bing.com/th/id/OIP.88G3_UmmoLq_Djf6DgWvugHaLH?rs=1&pid=ImgDetMain" alt="R.I.P.D.: Rest in Peace Department">
+                <h3><a href="https://drive.google.com/uc?export=download&id=1Bo2ty7YcnxVWtB5UgADR7zy_Pc7C9syJ" download >R.I.P.D.: Rest in Peace Department</a></h3>
+            </div>
+            <div class="movie">
+                <img src="https://upload.wikimedia.org/wikipedia/en/7/75/Leo_%282023_Indian_film%29.jpg" alt="LEO">
+                <h3><a href="https://drive.google.com/uc?export=download&id=1LNV3gxwTAwVNbUghSCc6Hvm7-xs5Syis&confirm=yTib" download >LEO</a></h3>
+            </div>
         </div>
-        <div class="movie">
-            <img src="https://m.media-amazon.com/images/M/MV5BZDY0YzI0OTctYjVhYy00MTVhLWE0NTgtYTRmYTBmOTE3YTViXkEyXkFqcGdeQXVyMTUzMTg2ODkz._V1_.jpg" alt="Movie 2">
-            <h3><a href="https://drive.google.com/uc?export=download&id=1cPU0PspIxsrq9Qj4S1yzuGiujVker9ar" download >Kung Fu Panda 4</a></h3>
-        <!-- <p>Description of Movie 2.</p> -->
-    </div>
-    <div class="movie">
-        <img src="https://th.bing.com/th/id/OIP.ZcROLiHzS1Oi_o1aDP7gLAHaLH?rs=1&pid=ImgDetMain" alt="Movie 2">
-        <h3><a href="https://drive.google.com/uc?export=download&id=1nEoc6LWN1XrWqkWhbGQvkszqAt94W50y" download >Independence Day: Resurgence</a></h3>
-    <!-- <p>Description of Movie 2.</p> -->
-</div>
-<div class="movie">
-    <img src="https://th.bing.com/th/id/OIP.QZtKtP2hrIBoUQ677AQvqwHaKh?rs=1&pid=ImgDetMain" alt="Movie 2">
-    <h3><a href="https://drive.google.com/uc?export=download&id=176MV0DQgdzu8veNwEgz-4L2cDQS8NWq9" download >
-        Doctor Strange in the Multiverse of Madness</a></h3>
-<!-- <p>Description of Movie 2.</p> -->
-</div>
-<div class="movie">
-    <img src="https://th.bing.com/th/id/OIP.88G3_UmmoLq_Djf6DgWvugHaLH?rs=1&pid=ImgDetMain" alt="Movie 2">
-    <h3><a href="https://drive.google.com/uc?export=download&id=1Bo2ty7YcnxVWtB5UgADR7zy_Pc7C9syJ" download >
-        R.I.P.D.: Rest in Peace Department</a></h3>
-<!-- <p>Description of Movie 2.</p> -->
-</div>
-<div class="movie">
-    <img src="https://upload.wikimedia.org/wikipedia/en/7/75/Leo_%282023_Indian_film%29.jpg" alt="Movie 2">
-    <h3><a href="https://drive.google.com/uc?export=download&id=1LNV3gxwTAwVNbUghSCc6Hvm7-xs5Syis&confirm=yTib" download >
-        LEO</a></h3>
-<!-- <p>Description of Movie 2.</p> -->
-</div>
     </section>
 </main>
 
 <footer>
     <div class="container">
-        <p>&copy; 2024 Movies Website.copyright @ silu..</p>
+        <p>&copy; 2024 Movies Website. copyright @ silu..</p>
     </div>
 </footer>
-<script>
-    var sidemenu=document.getElementById("sidemenu");
 
-    function openmenu(){
-        sidemenu.style.right="0";
+<script>
+    function openmenu() {
+        document.getElementById("sidemenu").style.right = "0";
     }
-    function closemenu(){
-        sidemenu.style.right="-200px";
+
+    function closemenu() {
+        document.getElementById("sidemenu").style.right = "-200px";
+    }
+
+    function filterMovies() {
+        let input = document.getElementById('search-bar').value.toLowerCase();
+        let movies = document.getElementsByClassName('movie');
+
+        for (let i = 0; i < movies.length; i++) {
+            let movie = movies[i];
+            let title = movie.getElementsByTagName('h3')[0].innerText.toLowerCase();
+
+            if (title.indexOf(input) > -1) {
+                movie.style.display = "";
+            } else {
+                movie.style.display = "none";
+            }
+        }
     }
 </script>
+
 </body>
 </html>
