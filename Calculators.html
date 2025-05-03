@@ -3,13 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spark Config Calculator</title>
+  <title>Spark Resource Calculator</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       margin: 0;
       padding: 0;
-      background: linear-gradient(120deg, #f3f4f6, #e0e7ff);
+      background: linear-gradient(120deg, #eef2ff, #e0e7ff);
       min-height: 100vh;
       display: flex;
       align-items: center;
@@ -26,7 +26,7 @@
       background: white;
       padding: 30px;
       border-radius: 12px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
       max-width: 600px;
       width: 100%;
       animation: popUp 0.5s ease-in;
@@ -39,154 +39,176 @@
 
     h1 {
       text-align: center;
-      color: #2c3e50;
+      color: #1e3a8a;
       margin-bottom: 20px;
     }
 
     label {
       display: block;
-      margin: 12px 0 6px;
+      margin-top: 15px;
       font-weight: bold;
       color: #374151;
     }
 
-    input[type="number"] {
+    input, select {
       width: 100%;
       padding: 10px;
-      border: 1px solid #ccc;
+      border: 1px solid #cbd5e1;
       border-radius: 6px;
-      font-size: 16px;
-      transition: border 0.3s;
+      font-size: 15px;
     }
 
-    input:focus {
+    input:focus, select:focus {
       outline: none;
-      border-color: #4f46e5;
+      border-color: #6366f1;
     }
 
     button {
       width: 100%;
       padding: 12px;
+      margin-top: 25px;
+      font-size: 16px;
       background-color: #4f46e5;
       color: white;
-      font-size: 16px;
       border: none;
       border-radius: 8px;
-      margin-top: 20px;
       cursor: pointer;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: all 0.3s ease;
     }
 
     button:hover {
       background-color: #4338ca;
-      transform: scale(1.02);
+      transform: scale(1.03);
     }
 
     h2 {
-      margin-top: 30px;
-      font-size: 20px;
-      color: #1f2937;
       text-align: center;
+      margin-top: 25px;
+      font-size: 18px;
+      color: #111827;
     }
 
     pre {
-      background: #f3f4f6;
+      background-color: #f3f4f6;
       padding: 15px;
       border-radius: 8px;
-      margin-top: 10px;
       white-space: pre-wrap;
+      word-break: break-word;
       font-size: 14px;
-      animation: fadeIn 1s ease-in;
+      animation: fadeIn 0.5s ease-in;
     }
+
     @media (max-width: 480px) {
-  .container {
-    padding: 20px;
-  }
+      .container {
+        padding: 20px;
+      }
 
-  h1 {
-    font-size: 20px;
-  }
+      h1 {
+        font-size: 20px;
+      }
 
-  input[type="number"],
-  button {
-    font-size: 14px;
-    padding: 10px;
-  }
+      input, select, button {
+        font-size: 14px;
+        padding: 10px;
+      }
 
-  pre {
-    font-size: 13px;
-  }
-}
-
+      pre {
+        font-size: 13px;
+      }
+    }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Spark Config Calculator</h1>
+    <h1>Spark Resource Calculator</h1>
 
-    <label for="totalCores">Total Cores:</label>
-    <input type="number" id="totalCores" value="32" />
+    <label for="memory">Total Memory (GB):</label>
+    <input type="number" id="memory" value="128" />
 
-    <label for="totalMem">Total Memory (GB):</label>
-    <input type="number" id="totalMem" value="128" />
+    <label for="cores">Total Cores:</label>
+    <input type="number" id="cores" value="32" />
 
-    <label for="execCores">Executor Cores:</label>
-    <input type="number" id="execCores" value="5" />
+    <label for="driverMemPercent">Driver Memory % (Default 10%):</label>
+    <input type="number" id="driverMemPercent" value="10" />
 
-    <label for="execMem">Executor Memory (GB):</label>
-    <input type="number" id="execMem" value="20" />
+    <label for="driverCores">Driver Core Count (Default 1):</label>
+    <input type="number" id="driverCores" value="1" />
 
-    <button onclick="calculateSparkConfig()">Calculate</button>
+    <label for="executorCores">Executor Core Count (Default 5):</label>
+    <input type="number" id="executorCores" value="5" />
 
-    <h2>Output:</h2>
+    <label for="dynamicAlloc">Enable Dynamic Allocation:</label>
+    <select id="dynamicAlloc">
+      <option value="true">Yes</option>
+      <option value="false">No</option>
+    </select>
+
+    <label for="minExecutors">Min Executors (if dynamic alloc is enabled):</label>
+    <input type="number" id="minExecutors" value="1" />
+
+    <label for="initialExecutors">Initial Executors (if dynamic alloc is enabled):</label>
+    <input type="number" id="initialExecutors" value="2" />
+
+    <label for="maxExecutors">Max Executors (if dynamic alloc is enabled):</label>
+    <input type="number" id="maxExecutors" value="10" />
+
+    <button onclick="calculateConfig()">Calculate</button>
+
+    <h2>Configuration Output</h2>
     <pre id="output"></pre>
   </div>
 
   <script>
-    function calculateSparkConfig() {
-      const totalCores = parseInt(document.getElementById("totalCores").value);
-      const totalMem = parseFloat(document.getElementById("totalMem").value);
-      const executorCores = parseInt(document.getElementById("execCores").value);
-      const executorMem = parseFloat(document.getElementById("execMem").value);
+    function calculateConfig() {
+      const totalMemory = parseInt(document.getElementById("memory").value);
+      const totalCores = parseInt(document.getElementById("cores").value);
+      const driverMemPercent = parseInt(document.getElementById("driverMemPercent").value);
+      const driverCores = parseInt(document.getElementById("driverCores").value);
+      const executorCores = parseInt(document.getElementById("executorCores").value);
+      const dynamicAlloc = document.getElementById("dynamicAlloc").value === "true";
+      const minExecutors = parseInt(document.getElementById("minExecutors").value);
+      const initialExecutors = parseInt(document.getElementById("initialExecutors").value);
+      const maxExecutors = parseInt(document.getElementById("maxExecutors").value);
 
-      const reservedCores = 2;
-      const reservedMem = 0.10 * totalMem;
+      try {
+        // Driver memory
+        const driverMemory = Math.floor((driverMemPercent / 100) * totalMemory);
+        const remainingMemory = totalMemory - driverMemory;
+        const remainingCores = totalCores - driverCores;
 
-      const availableCores = totalCores - reservedCores;
-      const availableMem = totalMem - reservedMem;
+        const numExecutors = Math.floor(remainingCores / executorCores);
+        if (numExecutors <= 0) {
+          throw new Error("Not enough cores to allocate even one executor.");
+        }
 
-      const memOverhead = Math.max(0.1 * executorMem, 0.384);
-      const totalExecutorMem = executorMem + memOverhead;
+        const executorMemory = Math.floor(remainingMemory / numExecutors);
 
-      const maxExecutorsByCore = Math.floor(availableCores / executorCores);
-      const maxExecutorsByMem = Math.floor(availableMem / totalExecutorMem);
-      const executorsPerNode = Math.min(maxExecutorsByCore, maxExecutorsByMem);
+        const config = {
+          "--driver-memory": `${driverMemory}G`,
+          "--driver-cores": driverCores,
+          "--executor-memory": `${executorMemory}G`,
+          "--executor-cores": executorCores
+        };
 
-      const driverMem = Math.floor(0.3 * totalMem);
-      const driverCores = Math.floor(0.3 * totalCores);
-      const driverOverhead = Math.max(0.1 * driverMem, 0.384);
+        if (dynamicAlloc) {
+          config["spark.dynamicAllocation.enabled"] = "true";
+          config["spark.dynamicAllocation.minExecutors"] = minExecutors;
+          config["spark.dynamicAllocation.initialExecutors"] = initialExecutors;
+          config["spark.dynamicAllocation.maxExecutors"] = maxExecutors;
+        } else {
+          config["--num-executors"] = numExecutors;
+        }
 
-      const output = `
-=== Spark Executor Configuration ===
-Executors per Node     : ${executorsPerNode}
-Executor Memory        : ${executorMem}g
-Executor Cores         : ${executorCores}
-Memory Overhead        : ${Math.floor(memOverhead)}g
-Total Memory per Exec  : ${Math.floor(totalExecutorMem)}g
+        let output = '';
+        for (const [key, value] of Object.entries(config)) {
+          output += `${key}: ${value}\n`;
+        }
 
-=== Spark Driver Configuration ===
-Driver Memory          : ${driverMem}g
-Driver Cores           : ${driverCores}
-Driver Memory Overhead : ${Math.floor(driverOverhead)}g
-      `;
-
-      const outputDiv = document.getElementById("output");
-      outputDiv.style.opacity = 0;
-      setTimeout(() => {
-        outputDiv.innerText = output.trim();
-        outputDiv.style.opacity = 1;
-      }, 200);
+        document.getElementById("output").innerText = output.trim();
+      } catch (err) {
+        document.getElementById("output").innerText = "Error: " + err.message;
+      }
     }
   </script>
 
