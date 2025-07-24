@@ -1,216 +1,404 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Spark Resource Calculator</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      margin: 0;
-      padding: 0;
-      background: linear-gradient(120deg, #eef2ff, #e0e7ff);
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: fadeIn 1s ease-in;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    .container {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      max-width: 600px;
-      width: 100%;
-      animation: popUp 0.5s ease-in;
-    }
-
-    @keyframes popUp {
-      0% { transform: scale(0.9); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-
-    h1 {
-      text-align: center;
-      color: #1e3a8a;
-      margin-bottom: 20px;
-    }
-
-    label {
-      display: block;
-      margin-top: 15px;
-      font-weight: bold;
-      color: #374151;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 10px;
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      font-size: 15px;
-    }
-
-    input:focus, select:focus {
-      outline: none;
-      border-color: #6366f1;
-    }
-
-    button {
-      width: 100%;
-      padding: 12px;
-      margin-top: 25px;
-      font-size: 16px;
-      background-color: #4f46e5;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-    }
-
-    button:hover {
-      background-color: #4338ca;
-      transform: scale(1.03);
-    }
-
-    h2 {
-      text-align: center;
-      margin-top: 25px;
-      font-size: 18px;
-      color: #111827;
-    }
-
-    pre {
-      background-color: #f3f4f6;
-      padding: 15px;
-      border-radius: 8px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 14px;
-      animation: fadeIn 0.5s ease-in;
-    }
-
-    @media (max-width: 480px) {
-      .container {
-        padding: 20px;
-      }
-
-      h1 {
-        font-size: 20px;
-      }
-
-      input, select, button {
-        font-size: 14px;
-        padding: 10px;
-      }
-
-      pre {
-        font-size: 13px;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spark Configuration Calculator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        .input-group:focus-within label, .input-group-checkbox:focus-within label {
+            color: #3b82f6;
+        }
+        .result-card {
+            transition: all 0.3s ease-in-out;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            opacity: 0;
+            transition: opacity 0.3s ease-in-out;
+        }
+        .result-card:hover .copy-btn {
+            opacity: 1;
+        }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 240px;
+            background-color: #555;
+            color: #fff;
+            text-align: center;
+            border-radius: 6px;
+            padding: 5px 10px;
+            position: absolute;
+            z-index: 1;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -120px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.75rem;
+            font-weight: 400;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-gray-50 text-gray-800">
 
-  <div class="container">
-    <h1>Spark Resource Calculator</h1>
+    <div class="container mx-auto p-4 md:p-8 max-w-4xl">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-gray-900">Spark Configuration Calculator</h1>
+            <p class="text-gray-600 mt-2">Optimize your Spark jobs by providing the details below.</p>
+        </header>
 
-    <label for="memory">Total Memory (GB):</label>
-    <input type="number" id="memory" value="128" />
+        <main class="bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+            <!-- Input Section -->
+            <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mb-4">Cluster & Job Details</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="input-group">
+                    <label for="dataSize" class="block text-sm font-medium text-gray-700 mb-1">Input Data Size (GB)</label>
+                    <input type="number" id="dataSize" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 1024">
+                </div>
+                <div class="input-group">
+                    <label for="numInstances" class="block text-sm font-medium text-gray-700 mb-1">Number of Worker Nodes</label>
+                    <input type="number" id="numInstances" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 10">
+                </div>
+                <div class="input-group">
+                    <label for="instanceMemory" class="block text-sm font-medium text-gray-700 mb-1">Memory per Worker (GB)</label>
+                    <input type="number" id="instanceMemory" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 64">
+                </div>
+                <div class="input-group">
+                    <label for="instanceCores" class="block text-sm font-medium text-gray-700 mb-1">Cores per Worker</label>
+                    <input type="number" id="instanceCores" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 16">
+                </div>
+                 <div class="input-group">
+                    <label for="concurrentJobs" class="block text-sm font-medium text-gray-700 mb-1">Number of Concurrent Jobs</label>
+                    <input type="number" id="concurrentJobs" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 1" value="1">
+                </div>
+                <div class="input-group">
+                    <label for="deployMode" class="block text-sm font-medium text-gray-700 mb-1">Deploy Mode</label>
+                    <select id="deployMode" class="w-full p-3 bg-gray-100 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition">
+                        <option value="cluster">Cluster</option>
+                        <option value="client">Client</option>
+                    </select>
+                </div>
+            </div>
 
-    <label for="cores">Total Cores:</label>
-    <input type="number" id="cores" value="32" />
+            <h3 class="text-lg font-semibold text-gray-800 border-b pb-2 mt-8 mb-4">Advanced Configuration</h3>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="input-group-checkbox flex items-center">
+                    <input type="checkbox" id="dynamicAllocation" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="dynamicAllocation" class="ml-2 block text-sm font-medium text-gray-900">Enable Dynamic Allocation</label>
+                </div>
+                <div class="input-group-checkbox flex items-center">
+                    <input type="checkbox" id="specifyDriverResources" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                    <label for="specifyDriverResources" class="ml-2 block text-sm font-medium text-gray-900">Specify Custom Driver Resources</label>
+                </div>
+            </div>
 
-    <label for="driverMemPercent">Driver Memory % (Default 10%):</label>
-    <input type="number" id="driverMemPercent" value="10" />
+            <div id="customDriverSection" class="hidden grid grid-cols-1 md:grid-cols-2 gap-6 mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+                 <div class="input-group">
+                    <label for="driverMemoryInput" class="block text-sm font-medium text-gray-700 mb-1">Driver Memory (GB)</label>
+                    <input type="number" id="driverMemoryInput" class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 8">
+                </div>
+                <div class="input-group">
+                    <label for="driverCoresInput" class="block text-sm font-medium text-gray-700 mb-1">Driver Cores</label>
+                    <input type="number" id="driverCoresInput" class="w-full p-3 bg-white border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition" placeholder="e.g., 1">
+                </div>
+            </div>
 
-    <label for="driverCores">Driver Core Count (Default 1):</label>
-    <input type="number" id="driverCores" value="1" />
 
-    <label for="executorCores">Executor Core Count (Default 5):</label>
-    <input type="number" id="executorCores" value="5" />
+            <!-- Action Buttons -->
+            <div class="mt-8 flex justify-center gap-4">
+                <button id="calculateBtn" class="bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-md hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-300 transition-all transform hover:scale-105">
+                    Calculate
+                </button>
+                 <button id="resetBtn" class="bg-gray-200 text-gray-700 font-semibold py-3 px-8 rounded-lg hover:bg-gray-300 focus:outline-none focus:ring-4 focus:ring-gray-200 transition">
+                    Reset
+                </button>
+            </div>
+             <div id="error-message" class="text-red-500 text-center mt-4 font-medium"></div>
+        </main>
 
-    <label for="dynamicAlloc">Enable Dynamic Allocation:</label>
-    <select id="dynamicAlloc">
-      <option value="true">Yes</option>
-      <option value="false">No</option>
-    </select>
+        <!-- Results Section -->
+        <section id="resultsSection" class="mt-10 hidden">
+            <h2 class="text-2xl font-bold text-center text-gray-900 mb-6">Recommended Configuration</h2>
+            
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <div class="result-card bg-white p-5 rounded-xl shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">Driver Configuration</h3>
+                    <p class="text-2xl font-bold text-blue-600 mt-1"><span id="driverMemory"></span> / <span id="driverCores"></span></p>
+                    <p class="text-xs text-gray-400">(Memory / Cores)</p>
+                </div>
+                <div class="result-card bg-white p-5 rounded-xl shadow-md text-center">
+                    <h3 class="text-sm font-medium text-gray-500">Executor Configuration</h3>
+                    <p class="text-2xl font-bold text-blue-600 mt-1"><span id="executorMemory"></span> / <span id="executorCores"></span></p>
+                     <p class="text-xs text-gray-400">(Memory / Cores)</p>
+                </div>
+                <div class="result-card bg-white p-5 rounded-xl shadow-md text-center">
+                    <h3 id="numExecutorsTitle" class="text-sm font-medium text-gray-500">Total Executors</h3>
+                    <p class="text-2xl font-bold text-blue-600 mt-1" id="numExecutors"></p>
+                    <p id="numExecutorsSubtitle" class="text-xs text-gray-400">(Per Job)</p>
+                </div>
+            </div>
 
-    <label for="minExecutors">Min Executors (if dynamic alloc is enabled):</label>
-    <input type="number" id="minExecutors" value="1" />
+            <div class="result-card relative bg-gray-800 text-gray-50 p-6 rounded-xl shadow-lg">
+                 <button id="copyBtn" class="copy-btn bg-gray-600 hover:bg-gray-500 text-white font-bold py-1 px-3 rounded-lg text-sm">Copy</button>
+                 <h3 class="text-lg font-semibold mb-4 text-white">Spark Parameters</h3>
+                 <pre id="sparkParams" class="text-sm md:text-base whitespace-pre-wrap"></pre>
+            </div>
+        </section>
 
-    <label for="initialExecutors">Initial Executors (if dynamic alloc is enabled):</label>
-    <input type="number" id="initialExecutors" value="2" />
+    </div>
 
-    <label for="maxExecutors">Max Executors (if dynamic alloc is enabled):</label>
-    <input type="number" id="maxExecutors" value="10" />
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const calculateBtn = document.getElementById('calculateBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const copyBtn = document.getElementById('copyBtn');
+            const resultsSection = document.getElementById('resultsSection');
+            const errorMessage = document.getElementById('error-message');
+            const customDriverSection = document.getElementById('customDriverSection');
+            
+            const inputs = {
+                dataSize: document.getElementById('dataSize'),
+                numInstances: document.getElementById('numInstances'),
+                instanceMemory: document.getElementById('instanceMemory'),
+                instanceCores: document.getElementById('instanceCores'),
+                concurrentJobs: document.getElementById('concurrentJobs'),
+                dynamicAllocation: document.getElementById('dynamicAllocation'),
+                deployMode: document.getElementById('deployMode'),
+                specifyDriverResources: document.getElementById('specifyDriverResources'),
+                driverMemoryInput: document.getElementById('driverMemoryInput'),
+                driverCoresInput: document.getElementById('driverCoresInput'),
+            };
 
-    <button onclick="calculateConfig()">Calculate</button>
+            const outputs = {
+                driverMemory: document.getElementById('driverMemory'),
+                driverCores: document.getElementById('driverCores'),
+                executorMemory: document.getElementById('executorMemory'),
+                executorCores: document.getElementById('executorCores'),
+                numExecutors: document.getElementById('numExecutors'),
+                numExecutorsTitle: document.getElementById('numExecutorsTitle'),
+                numExecutorsSubtitle: document.getElementById('numExecutorsSubtitle'),
+                sparkParams: document.getElementById('sparkParams'),
+            };
 
-    <h2>Configuration Output</h2>
-    <pre id="output"></pre>
-  </div>
+            // --- Event Listeners ---
+            calculateBtn.addEventListener('click', handleCalculation);
+            resetBtn.addEventListener('click', handleReset);
+            copyBtn.addEventListener('click', handleCopy);
+            inputs.specifyDriverResources.addEventListener('change', () => {
+                customDriverSection.classList.toggle('hidden', !inputs.specifyDriverResources.checked);
+            });
 
-  <script>
-    function calculateConfig() {
-      const totalMemory = parseInt(document.getElementById("memory").value);
-      const totalCores = parseInt(document.getElementById("cores").value);
-      const driverMemPercent = parseInt(document.getElementById("driverMemPercent").value);
-      const driverCores = parseInt(document.getElementById("driverCores").value);
-      const executorCores = parseInt(document.getElementById("executorCores").value);
-      const dynamicAlloc = document.getElementById("dynamicAlloc").value === "true";
-      const minExecutors = parseInt(document.getElementById("minExecutors").value);
-      const initialExecutors = parseInt(document.getElementById("initialExecutors").value);
-      const maxExecutors = parseInt(document.getElementById("maxExecutors").value);
+            // --- Functions ---
+            function validateInputs() {
+                const requiredInputs = [ 'dataSize', 'numInstances', 'instanceMemory', 'instanceCores', 'concurrentJobs' ];
+                let allValid = true;
 
-      try {
-        // Driver memory
-        const driverMemory = Math.floor((driverMemPercent / 100) * totalMemory);
-        const remainingMemory = totalMemory - driverMemory;
-        const remainingCores = totalCores - driverCores;
+                for (const key of requiredInputs) {
+                    if (!inputs[key].value || parseFloat(inputs[key].value) <= 0) {
+                        inputs[key].classList.add('border-red-500', 'ring-red-500');
+                        allValid = false;
+                    } else {
+                        inputs[key].classList.remove('border-red-500', 'ring-red-500');
+                    }
+                }
 
-        const numExecutors = Math.floor(remainingCores / executorCores);
-        if (numExecutors <= 0) {
-          throw new Error("Not enough cores to allocate even one executor.");
-        }
+                if (inputs.specifyDriverResources.checked) {
+                     if (!inputs.driverMemoryInput.value || parseFloat(inputs.driverMemoryInput.value) <= 0) {
+                        inputs.driverMemoryInput.classList.add('border-red-500', 'ring-red-500');
+                        allValid = false;
+                    } else {
+                        inputs.driverMemoryInput.classList.remove('border-red-500', 'ring-red-500');
+                    }
+                     if (!inputs.driverCoresInput.value || parseFloat(inputs.driverCoresInput.value) <= 0) {
+                        inputs.driverCoresInput.classList.add('border-red-500', 'ring-red-500');
+                        allValid = false;
+                    } else {
+                        inputs.driverCoresInput.classList.remove('border-red-500', 'ring-red-500');
+                    }
+                }
 
-        const executorMemory = Math.floor(remainingMemory / numExecutors);
+                errorMessage.textContent = allValid ? '' : 'Please fill in all highlighted fields with positive numbers.';
+                return allValid;
+            }
 
-        const config = {
-          "--driver-memory": `${driverMemory}G`,
-          "--driver-cores": driverCores,
-          "--executor-memory": `${executorMemory}G`,
-          "--executor-cores": executorCores
-        };
+            function handleCalculation() {
+                if (!validateInputs()) {
+                    resultsSection.classList.add('hidden');
+                    return;
+                }
 
-        if (dynamicAlloc) {
-          config["spark.dynamicAllocation.enabled"] = "true";
-          config["spark.dynamicAllocation.minExecutors"] = minExecutors;
-          config["spark.dynamicAllocation.initialExecutors"] = initialExecutors;
-          config["spark.dynamicAllocation.maxExecutors"] = maxExecutors;
-        } else {
-          config["--num-executors"] = numExecutors;
-        }
+                // --- Input Values ---
+                const dataSize = parseFloat(inputs.dataSize.value);
+                const numInstances = parseInt(inputs.numInstances.value);
+                const instanceMemory = parseFloat(inputs.instanceMemory.value);
+                const instanceCores = parseInt(inputs.instanceCores.value);
+                const concurrentJobs = parseInt(inputs.concurrentJobs.value);
+                const dynamicAllocationEnabled = inputs.dynamicAllocation.checked;
+                const deployMode = inputs.deployMode.value;
 
-        let output = '';
-        for (const [key, value] of Object.entries(config)) {
-          output += `${key}: ${value}\n`;
-        }
+                // --- Constants and Heuristics ---
+                const MEMORY_OVERHEAD_FACTOR = 0.10;
+                const CORES_FOR_OS = 1;
+                const PREFERRED_EXECUTOR_CORES = 5;
 
-        document.getElementById("output").innerText = output.trim();
-      } catch (err) {
-        document.getElementById("output").innerText = "Error: " + err.message;
-      }
-    }
-  </script>
+                // --- Executor Calculations ---
+                const availableCoresPerNode = instanceCores - CORES_FOR_OS;
+                const availableMemoryPerNode = instanceMemory * (1 - MEMORY_OVERHEAD_FACTOR);
+                
+                if (availableCoresPerNode <= 0) {
+                    errorMessage.textContent = "Cores per Worker must be greater than 1 to leave a core for the OS.";
+                    resultsSection.classList.add('hidden');
+                    return;
+                }
+
+                const executorCores = Math.min(PREFERRED_EXECUTOR_CORES, availableCoresPerNode);
+                const numExecutorsPerNode = Math.floor(availableCoresPerNode / executorCores);
+                
+                if (numExecutorsPerNode === 0) {
+                    errorMessage.textContent = "Not enough cores per node to launch even one executor. Try increasing 'Cores per Worker'.";
+                    resultsSection.classList.add('hidden');
+                    return;
+                }
+
+                const memoryPerExecutorRaw = availableMemoryPerNode / numExecutorsPerNode;
+                const executorMemory = Math.floor(memoryPerExecutorRaw);
+                const executorMemoryOverhead = Math.ceil(memoryPerExecutorRaw * MEMORY_OVERHEAD_FACTOR);
+
+                const totalAvailableExecutors = numExecutorsPerNode * numInstances;
+                const maxExecutorsForJob = Math.floor(totalAvailableExecutors / concurrentJobs) - (deployMode === 'cluster' ? 1 : 0);
+
+                if (maxExecutorsForJob < 1) {
+                    errorMessage.textContent = "Cluster is too small for the number of concurrent jobs. Not enough resources to allocate executors.";
+                    resultsSection.classList.add('hidden');
+                    return;
+                }
+
+                // --- Driver Calculations ---
+                let driverMemory, driverCores;
+                if (inputs.specifyDriverResources.checked) {
+                    // Use user-specified values
+                    driverMemory = parseFloat(inputs.driverMemoryInput.value);
+                    driverCores = parseInt(inputs.driverCoresInput.value);
+                } else {
+                    // A more refined heuristic for driver memory.
+                    // It considers a base amount, memory for task management proportional to job scale (total cores),
+                    // and a buffer for collecting results proportional to data size.
+                    const totalExecutorCores = maxExecutorsForJob * executorCores;
+                    const BASE_DRIVER_MEMORY_GB = 2; // Base memory for Spark application
+                    const MEMORY_PER_CORE_MB = 2; // Memory per core for task metadata
+                    
+                    const taskManagementMemoryGB = (totalExecutorCores * MEMORY_PER_CORE_MB) / 1024;
+                    const collectionBufferGB = dataSize * 0.01; // A smaller percentage for result collection
+                    
+                    const calculatedDriverMemory = BASE_DRIVER_MEMORY_GB + taskManagementMemoryGB + collectionBufferGB;
+                    
+                    // Cap the memory between 4GB and 64GB and round up.
+                    driverMemory = Math.ceil(Math.max(4, Math.min(64, calculatedDriverMemory)));
+                    driverCores = 1; // Default driver cores
+                }
+
+                const totalExecutorCores = maxExecutorsForJob * executorCores;
+                const shufflePartitions = totalExecutorCores * 2;
+
+                // --- Display Results ---
+                outputs.driverMemory.textContent = `${driverMemory}g`;
+                outputs.driverCores.textContent = `${driverCores} core(s)`;
+                outputs.executorMemory.textContent = `${executorMemory}g`;
+                outputs.executorCores.textContent = `${executorCores} cores`;
+
+                let sparkParamsContent = '';
+                if (dynamicAllocationEnabled) {
+                    const minExecutors = Math.max(1, Math.floor(maxExecutorsForJob * 0.1));
+                    const initialExecutors = minExecutors;
+                    outputs.numExecutorsTitle.textContent = 'Max Executors';
+                    outputs.numExecutors.textContent = maxExecutorsForJob;
+                    outputs.numExecutorsSubtitle.textContent = '(Dynamic Allocation)';
+                    
+                    sparkParamsContent = 
+`--conf spark.dynamicAllocation.enabled=true \\
+--conf spark.shuffle.service.enabled=true \\
+--conf spark.dynamicAllocation.minExecutors=${minExecutors} \\
+--conf spark.dynamicAllocation.maxExecutors=${maxExecutorsForJob} \\
+--conf spark.dynamicAllocation.initialExecutors=${initialExecutors} \\`;
+
+                } else {
+                    outputs.numExecutorsTitle.textContent = 'Total Executors';
+                    outputs.numExecutors.textContent = maxExecutorsForJob;
+                    outputs.numExecutorsSubtitle.textContent = '(Per Job)';
+
+                    sparkParamsContent = `--conf spark.executor.instances=${maxExecutorsForJob} \\`;
+                }
+
+                outputs.sparkParams.textContent =
+`--deploy-mode ${deployMode} \\
+--conf spark.driver.memory=${driverMemory}g \\
+--conf spark.driver.cores=${driverCores} \\
+${sparkParamsContent}
+--conf spark.executor.memory=${executorMemory}g \\
+--conf spark.executor.cores=${executorCores} \\
+--conf spark.memory.offHeap.enabled=true \\
+--conf spark.memory.offHeap.size=${executorMemoryOverhead}g \\
+--conf spark.sql.shuffle.partitions=${shufflePartitions} \\
+--conf spark.default.parallelism=${shufflePartitions}`;
+
+                resultsSection.classList.remove('hidden');
+            }
+            
+            function handleReset() {
+                Object.values(inputs).forEach(input => {
+                    if (input.type === 'checkbox') {
+                        input.checked = false;
+                    } else if (input.tagName === 'SELECT') {
+                        input.value = 'cluster';
+                    } else {
+                        input.value = '';
+                    }
+                    if (input.type === 'number') {
+                        input.classList.remove('border-red-500', 'ring-red-500');
+                    }
+                });
+                
+                inputs.concurrentJobs.value = '1';
+                customDriverSection.classList.add('hidden');
+                resultsSection.classList.add('hidden');
+                errorMessage.textContent = '';
+            }
+
+            function handleCopy() {
+                const textToCopy = outputs.sparkParams.textContent;
+                const textArea = document.createElement('textarea');
+                textArea.value = textToCopy.replace(/ \\\n/g, ' ');
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    copyBtn.textContent = 'Copied!';
+                    setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text: ', err);
+                    copyBtn.textContent = 'Error';
+                     setTimeout(() => { copyBtn.textContent = 'Copy'; }, 2000);
+                }
+                document.body.removeChild(textArea);
+            }
+        });
+    </script>
 
 </body>
 </html>
