@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>PyRun — Python, in the browser</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/theme/dracula.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.24.1/full/pyodide.js"></script>
+
+<style>
+  :root{
+    --bg: #10131a;
+    --panel: #161a24;
+    --panel-2: #1c2130;
+    --border: #2a3040;
+    --text: #e7e9ee;
+    --text-dim: #8b93a7;
+    --text-faint: #545c6f;
+    --accent: #e8b64c;
+    --accent-dim: #7a6430;
+    --accent-2: #5fb3b3;
+    --success: #6fcf97;
+    --error: #ef6a6a;
+    --radius: 7px;
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0; padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    height: 100%;
+  }
+
+  ::selection { background: var(--accent-dim); color: #fff; }
+
+  .app {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    min-height: 640px;
+  }
+
+  @media (max-width: 720px) {
+    .app { min-height: 100vh; height: auto; min-height: 100dvh; }
+  }
+
+  /* ---------- Top bar ---------- */
+  .topbar {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px 18px;
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, #131722, #10131a);
+    flex-shrink: 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-right: 8px;
+  }
+  .brand .mark {
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    font-size: 18px;
+    letter-spacing: 0.02em;
+    color: var(--text);
+  }
+  .brand .mark span { color: var(--accent); }
+  .brand .tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+
+  .status-pill {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    padding: 5px 10px;
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    background: var(--panel);
+  }
+  .dot {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: var(--text-faint);
+    transition: background 0.2s;
+  }
+  .dot.loading { background: var(--accent); animation: pulse 1s infinite ease-in-out; }
+  .dot.running { background: var(--accent-2); animation: pulse 0.7s infinite ease-in-out; }
+  .dot.ready { background: var(--success); }
+  .dot.success { background: var(--success); }
+  .dot.error { background: var(--error); }
+  @keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+
+  .spacer { flex: 1; }
+
+  .timer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-faint);
+    min-width: 54px;
+    text-align: right;
+  }
+
+  .run-btn {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--accent);
+    color: #1a1406;
+    border: none;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 600;
+    font-size: 14px;
+    padding: 9px 18px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: transform 0.08s, box-shadow 0.15s;
+    box-shadow: 0 0 0 rgba(232,182,76,0);
+  }
+  .run-btn:hover:not(:disabled) { box-shadow: 0 0 18px rgba(232,182,76,0.35); }
+  .run-btn:active:not(:disabled) { transform: scale(0.97); }
+  .run-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  /* ---------- Body layout ---------- */
+  .body {
+    display: flex;
+    flex: 1;
+    min-height: 0;
+  }
+
+  .sidebar {
+    width: 280px;
+    flex-shrink: 0;
+    border-right: 1px solid var(--border);
+    background: var(--panel);
+    padding: 18px 16px;
+    overflow-y: auto;
+  }
+
+  .section-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    margin: 0 0 10px 0;
+  }
+  .section + .section { margin-top: 26px; }
+
+  .dropzone {
+    border: 1.5px dashed var(--border);
+    border-radius: var(--radius);
+    padding: 18px 12px;
+    text-align: center;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    font-size: 12.5px;
+    color: var(--text-dim);
+  }
+  .dropzone:hover, .dropzone.drag { border-color: var(--accent-2); background: rgba(95,179,179,0.06); color: var(--text); }
+  .dropzone svg { display:block; margin: 0 auto 8px; opacity: 0.7; }
+
+  .file-list { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .file-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 9px;
+    font-size: 12px;
+    cursor: pointer;
+    min-height: 40px;
+  }
+  .file-chip:hover, .file-chip:active { border-color: var(--accent-2); }
+  .file-chip .fmeta {
+    flex: 1; min-width: 0;
+    display: flex; flex-direction: column; gap: 1px;
+  }
+  .file-chip .fname {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace; color: var(--text);
+  }
+  .file-chip .fpath {
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace; color: var(--accent-2); font-size: 10.5px;
+  }
+  .file-chip .fsize { color: var(--text-faint); font-size: 10.5px; flex-shrink:0; }
+  .file-chip .fcopy, .file-chip .fremove {
+    color: var(--text-faint); flex-shrink:0;
+    width: 24px; height: 24px; display: flex; align-items: center; justify-content: center;
+    border-radius: 5px;
+  }
+  .file-chip .fcopy:hover { color: var(--accent-2); background: rgba(95,179,179,0.12); }
+  .file-chip .fremove:hover { color: var(--error); background: rgba(239,106,106,0.12); }
+  .empty-hint { font-size: 11.5px; color: var(--text-faint); margin-top: 8px; line-height: 1.5; }
+  .empty-hint code { color: var(--accent-2); }
+
+  .pkg-input {
+    width: 100%;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 8px 9px;
+    border-radius: var(--radius);
+    outline: none;
+  }
+  .pkg-input:focus { border-color: var(--accent-2); }
+  .pkg-hint { font-size: 11px; color: var(--text-faint); margin-top: 7px; line-height: 1.5; }
+
+  .reset-link {
+    background: none; border: none; color: var(--text-dim);
+    font-family: 'Inter', sans-serif; font-size: 12px;
+    cursor: pointer; text-decoration: underline; text-underline-offset: 2px;
+    padding: 0; margin-top: 4px;
+  }
+  .reset-link:hover { color: var(--text); }
+
+  /* ---------- Main column ---------- */
+  .main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+
+  .editor-wrap {
+    flex: 1 1 55%;
+    min-height: 120px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+  }
+  .pane-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-faint);
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+  }
+  .CodeMirror { height: 100% !important; font-family: 'JetBrains Mono', monospace; font-size: 13.5px; line-height: 1.55; }
+  .editor-wrap .CodeMirror { flex: 1; }
+
+  .console-wrap {
+    flex: 1 1 30%;
+    min-height: 90px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    background: #0c0f16;
+  }
+  .console-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 10px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+  .console-body .line.stdout { color: #d6d9e0; }
+  .console-body .line.stderr { color: var(--error); }
+  .console-body .line.meta { color: var(--accent-2); }
+  .console-body .placeholder { color: var(--text-faint); }
+
+  .outputs-wrap {
+    flex: 0 0 auto;
+    max-height: 30%;
+    display: flex;
+    flex-direction: column;
+    background: var(--panel);
+  }
+  .outputs-body {
+    padding: 12px 14px;
+    overflow-y: auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .out-chip {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel-2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px 10px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 12.5px;
+    transition: border-color 0.15s;
+  }
+  .out-chip:hover { border-color: var(--success); }
+  .out-chip .fmeta { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+  .out-chip .fname { font-family: 'JetBrains Mono', monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .out-chip .fpath { font-family: 'JetBrains Mono', monospace; color: var(--success); font-size: 10px; opacity: 0.8; }
+  .out-chip .fsize { color: var(--text-faint); font-size: 10.5px; flex-shrink: 0; }
+  .out-chip svg { flex-shrink: 0; }
+
+  /* ---------- Bottom status bar ---------- */
+  .statusbar {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 6px 16px;
+    border-top: 1px solid var(--border);
+    background: var(--panel);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-faint);
+  }
+  .statusbar .cursor-blink {
+    display: inline-block; width: 6px; height: 12px;
+    background: var(--accent);
+    animation: blink 1s step-end infinite;
+    vertical-align: -2px;
+  }
+  @keyframes blink { 50% { opacity: 0; } }
+
+  input[type=file] { display: none; }
+
+  /* ---------- Tablet ---------- */
+  @media (max-width: 900px) {
+    .sidebar { width: 240px; }
+  }
+
+  /* ---------- Mobile / narrow ---------- */
+  @media (max-width: 720px) {
+    .body { flex-direction: column; overflow-y: auto; }
+
+    .sidebar {
+      width: 100%;
+      border-right: none;
+      border-bottom: 1px solid var(--border);
+      max-height: none;
+      overflow-y: visible;
+      order: 1;
+    }
+    .main { order: 2; min-height: 70vh; }
+
+    .brand .tag { display: none; }
+    .topbar { padding: 10px 12px; gap: 8px 10px; }
+    .status-pill { font-size: 11px; padding: 4px 8px; }
+    .timer { min-width: 40px; font-size: 11px; }
+    .run-btn {
+      order: 5;
+      flex: 1 0 100%;
+      justify-content: center;
+      padding: 12px 18px;
+      font-size: 15px;
+    }
+
+    .editor-wrap { flex-basis: 260px; }
+    .console-wrap { flex-basis: 180px; }
+    .outputs-wrap { max-height: 160px; }
+
+    .CodeMirror { font-size: 15px; }
+    .console-body { font-size: 13px; }
+
+    .pane-header { padding: 10px 12px; font-size: 10.5px; }
+    #cmdHint { display: none; }
+
+    .file-chip, .out-chip { min-height: 44px; }
+    .fcopy, .fremove { width: 30px !important; height: 30px !important; }
+
+    .statusbar { font-size: 10px; gap: 10px; padding: 6px 12px; flex-wrap: wrap; }
+    #pyVersion, .statusbar > span:first-child { display: none; }
+  }
+
+  @media (max-width: 420px) {
+    .brand .mark { font-size: 16px; }
+    .dropzone { padding: 14px 10px; font-size: 12px; }
+    .section-label { font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <div class="topbar">
+    <div class="brand">
+      <div class="mark">PY<span>RUN</span></div>
+      <div class="tag">python, compiled &amp; run in your browser</div>
+    </div>
+    <div class="spacer"></div>
+    <div class="status-pill"><span class="dot" id="statusDot"></span><span id="statusText">booting…</span></div>
+    <div class="timer" id="timer">—</div>
+    <button class="run-btn" id="runBtn" disabled>
+      <svg width="12" height="12" viewBox="0 0 12 12" fill="currentColor"><path d="M2 1.5v9l8-4.5-8-4.5z"/></svg>
+      Run
+    </button>
+  </div>
+
+  <div class="body">
+
+    <div class="sidebar">
+      <div class="section">
+        <div class="section-label">Input files</div>
+        <div class="dropzone" id="dropzone">
+          <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M10 3v9M6.5 8.5 10 12l3.5-3.5M4 15.5h12"/></svg>
+          Drop files here, or click to browse
+        </div>
+        <input type="file" id="fileInput" multiple />
+        <div class="file-list" id="fileList"></div>
+        <div class="empty-hint">Each file's full path is shown below it once uploaded. Tap a file to insert an <code>open()</code> snippet, or tap the copy icon for the path.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Packages</div>
+        <input class="pkg-input" id="pkgInput" placeholder="e.g. numpy, pandas" />
+        <div class="pkg-hint">Comma-separated. Loaded from Pyodide's package index before your code runs.</div>
+      </div>
+
+      <div class="section">
+        <div class="section-label">Editor</div>
+        <button class="reset-link" id="resetBtn">Reset to starter code</button>
+      </div>
+    </div>
+
+    <div class="main">
+      <div class="editor-wrap">
+        <div class="pane-header"><span>main.py</span><span id="cmdHint">⌘/Ctrl + Enter to run</span></div>
+        <textarea id="codeArea"></textarea>
+      </div>
+
+      <div class="console-wrap">
+        <div class="pane-header"><span>Console</span><span id="clearConsole" style="cursor:pointer;">clear</span></div>
+        <div class="console-body" id="consoleBody"><div class="line placeholder">Output from print(), errors, and tracebacks will appear here.</div></div>
+      </div>
+
+      <div class="outputs-wrap">
+        <div class="pane-header"><span>Output files</span><span id="clearOutputsHint"></span></div>
+        <div class="outputs-body" id="outputsBody">
+          <span class="empty-hint">Save files to <code>/outputs/</code> in your code — they'll show up here as downloads.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="statusbar">
+    <span>pyodide <span id="pyVersion">v0.24.1</span></span>
+    <span id="fsInfo">/uploads: 0 files</span>
+    <span class="spacer"></span>
+    <span id="readyLine"><span class="cursor-blink"></span> initializing runtime</span>
+  </div>
+
+</div>
+
+<script>
+const STARTER = `# Files you upload appear under /uploads/
+# Anything you save to /outputs/ becomes downloadable on the right
+
+
+`;
+
+let pyodide = null;
+let outputUrls = []; // track object URLs to revoke
+let uploadedNames = [];
+
+const editor = CodeMirror.fromTextArea(document.getElementById('codeArea'), {
+  mode: 'python',
+  theme: 'dracula',
+  lineNumbers: true,
+  indentUnit: 4,
+  tabSize: 4,
+  matchBrackets: true,
+  autoCloseBrackets: true,
+  extraKeys: {
+    'Cmd-Enter': runCode,
+    'Ctrl-Enter': runCode,
+    'Tab': (cm) => cm.replaceSelection('    ')
+  }
+});
+editor.setValue(STARTER);
+
+const statusDot = document.getElementById('statusDot');
+const statusText = document.getElementById('statusText');
+const runBtn = document.getElementById('runBtn');
+const timerEl = document.getElementById('timer');
+const consoleBody = document.getElementById('consoleBody');
+const outputsBody = document.getElementById('outputsBody');
+const fileList = document.getElementById('fileList');
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const pkgInput = document.getElementById('pkgInput');
+const fsInfo = document.getElementById('fsInfo');
+const readyLine = document.getElementById('readyLine');
+
+function setStatus(kind, label){
+  statusDot.className = 'dot ' + kind;
+  statusText.textContent = label;
+}
+
+function appendConsole(text, kind){
+  const placeholder = consoleBody.querySelector('.placeholder');
+  if (placeholder) placeholder.remove();
+  const div = document.createElement('div');
+  div.className = 'line ' + kind;
+  div.textContent = text;
+  consoleBody.appendChild(div);
+  consoleBody.scrollTop = consoleBody.scrollHeight;
+}
+
+function clearConsole(){
+  consoleBody.innerHTML = '<div class="line placeholder">Output from print(), errors, and tracebacks will appear here.</div>';
+}
+document.getElementById('clearConsole').onclick = clearConsole;
+
+document.getElementById('resetBtn').onclick = () => editor.setValue(STARTER);
+
+function humanSize(bytes){
+  if (bytes < 1024) return bytes + ' B';
+  if (bytes < 1024*1024) return (bytes/1024).toFixed(1) + ' KB';
+  return (bytes/1024/1024).toFixed(1) + ' MB';
+}
+
+/* ---------- Pyodide bootstrap ---------- */
+function withTimeout(promise, ms, label){
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(label + ' timed out after ' + (ms/1000) + 's — check your network connection and reload the page')), ms))
+  ]);
+}
+
+async function initPyodide(){
+  setStatus('loading', 'loading runtime…');
+  readyLine.innerHTML = '<span class="cursor-blink"></span> downloading pyodide + python 3';
+  pyodide = await withTimeout(
+    loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.24.1/full/" }),
+    45000,
+    'Loading the Python runtime'
+  );
+  pyodide.FS.mkdirTree('/uploads');
+  pyodide.FS.mkdirTree('/outputs');
+  setStatus('ready', 'ready');
+  readyLine.innerHTML = '<span class="cursor-blink"></span> ready — press Run';
+  runBtn.disabled = false;
+}
+initPyodide().catch(err => {
+  setStatus('error', 'failed to load');
+  readyLine.innerHTML = '<span class="cursor-blink"></span> runtime failed to load';
+  appendConsole('Could not load the Python runtime: ' + err.message, 'stderr');
+});
+
+/* ---------- File upload ---------- */
+function refreshFileList(){
+  fileList.innerHTML = '';
+  fsInfo.textContent = '/uploads: ' + uploadedNames.length + ' file' + (uploadedNames.length===1?'':'s');
+  uploadedNames.forEach(({name, size}) => {
+    const path = '/uploads/' + name;
+    const chip = document.createElement('div');
+    chip.className = 'file-chip';
+    chip.title = 'Tap to insert open() snippet at your cursor';
+    chip.innerHTML = `
+      <div class="fmeta">
+        <span class="fname">${name}</span>
+        <span class="fpath">${path}</span>
+      </div>
+      <span class="fsize">${humanSize(size)}</span>
+      <span class="fcopy" title="Copy path">
+        <svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="4" y="4" width="7" height="7" rx="1"/><path d="M2 8V2h7"/></svg>
+      </span>
+      <span class="fremove" title="Remove">✕</span>`;
+    chip.querySelector('.fmeta').onclick = () => {
+      const snippet = `open("${path}")`;
+      const cursor = editor.getCursor();
+      editor.replaceRange(snippet, cursor);
+      editor.focus();
+    };
+    chip.querySelector('.fcopy').onclick = (e) => {
+      e.stopPropagation();
+      navigator.clipboard?.writeText(path).catch(() => {});
+    };
+    chip.querySelector('.fremove').onclick = (e) => {
+      e.stopPropagation();
+      try { pyodide && pyodide.FS.unlink(path); } catch(_){}
+      uploadedNames = uploadedNames.filter(f => f.name !== name);
+      refreshFileList();
+    };
+    fileList.appendChild(chip);
+  });
+}
+
+async function handleFiles(fileArr){
+  if (!pyodide){ await initPyodide(); }
+  for (const f of fileArr){
+    const buf = new Uint8Array(await f.arrayBuffer());
+    pyodide.FS.writeFile('/uploads/' + f.name, buf);
+    uploadedNames = uploadedNames.filter(x => x.name !== f.name);
+    uploadedNames.push({ name: f.name, size: f.size });
+  }
+  refreshFileList();
+}
+
+dropzone.onclick = () => fileInput.click();
+fileInput.onchange = (e) => handleFiles([...e.target.files]);
+['dragenter','dragover'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.add('drag'); }));
+['dragleave','drop'].forEach(ev => dropzone.addEventListener(ev, e => { e.preventDefault(); dropzone.classList.remove('drag'); }));
+dropzone.addEventListener('drop', e => handleFiles([...e.dataTransfer.files]));
+
+/* ---------- Output files ---------- */
+function refreshOutputFiles(){
+  outputUrls.forEach(u => URL.revokeObjectURL(u));
+  outputUrls = [];
+  outputsBody.innerHTML = '';
+
+  let names = [];
+  try { names = pyodide.FS.readdir('/outputs').filter(n => n !== '.' && n !== '..'); } catch(_) {}
+
+  if (names.length === 0){
+    outputsBody.innerHTML = '<span class="empty-hint">Save files to <code>/outputs/</code> in your code — they will show up here as downloads.</span>';
+    return;
+  }
+
+  names.forEach(name => {
+    const data = pyodide.FS.readFile('/outputs/' + name);
+    const blob = new Blob([data]);
+    const url = URL.createObjectURL(blob);
+    outputUrls.push(url);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    a.className = 'out-chip';
+    a.innerHTML = `<svg width="13" height="13" viewBox="0 0 13 13" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6.5 1.5v7M3.5 6l3 3 3-3M2 11.5h9"/></svg><div class="fmeta"><span class="fname">${name}</span><span class="fpath">/outputs/${name}</span></div><span class="fsize">${humanSize(data.length)}</span>`;
+    outputsBody.appendChild(a);
+  });
+}
+
+/* ---------- Run ---------- */
+async function runCode(){
+  if (!pyodide){ await initPyodide(); }
+  if (runBtn.disabled) return;
+
+  runBtn.disabled = true;
+  clearConsole();
+  setStatus('running', 'running…');
+  readyLine.innerHTML = '<span class="cursor-blink"></span> executing main.py';
+  const start = performance.now();
+
+  pyodide.setStdout({ batched: (s) => appendConsole(s, 'stdout') });
+  pyodide.setStderr({ batched: (s) => appendConsole(s, 'stderr') });
+
+  try {
+    const pkgs = pkgInput.value.split(',').map(s => s.trim()).filter(Boolean);
+    if (pkgs.length){
+      appendConsole('Loading packages: ' + pkgs.join(', '), 'meta');
+      await pyodide.loadPackage(pkgs);
+    }
+    await pyodide.runPythonAsync(editor.getValue());
+    setStatus('success', 'done');
+  } catch (err) {
+    appendConsole(String(err), 'stderr');
+    setStatus('error', 'error');
+  } finally {
+    const elapsed = ((performance.now() - start) / 1000).toFixed(2) + 's';
+    timerEl.textContent = elapsed;
+    readyLine.innerHTML = '<span class="cursor-blink"></span> ready — press Run';
+    refreshOutputFiles();
+    runBtn.disabled = false;
+  }
+}
+runBtn.onclick = runCode;
+</script>
+
+</body>
+</html>
